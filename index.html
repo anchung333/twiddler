@@ -3,25 +3,90 @@
   <head>
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
+    <link href = "style.css" type = "text/css" rel = "stylesheet">
   </head>
   <body>
+    <h1 class = "title"> Twiddler </h1>
+    <section class = 'tweetBox'></section>
+    <button class = "btn btn-default" id = "tweetRefresh"> Load New Tweeds </button>
     <script>
+      $(document).ready(function() {
 
-      $(document).ready(function(){
-        var $body = $('body');
-        $body.html('');
+        function displayTweets(start, end) {
+          var $body = $('.tweetBox');
+          $body.html('');
+          var index = start;
+          while(index >= end){
+            var tweet = streams.home[index];
+            var $tweet = $('<div class = "tweetMessage"></div>');
+            var $handle = $('<div class = "userHandle"></div>');
+            var $age = $('<div class = "tweetAge"> </div>');
+            //split up into handle and message
+            $handle.text('@' + tweet.user);
+            $tweet.text(': ' + tweet.message + '   ');
+            $age.text(timeElapsed(tweet.created_at));
+            $age.appendTo($tweet);
+            $tweet.appendTo($handle);
+            $handle.appendTo($body);
 
-        var index = streams.home.length - 1;
-        while(index >= 0){
-          var tweet = streams.home[index];
-          var $tweet = $('<div></div>');
-          $tweet.text('@' + tweet.user + ': ' + tweet.message);
-          $tweet.appendTo($body);
-          index -= 1;
+            index -= 1;
+          }
+
+        $(".tweetBox").on("mouseover", ".userHandle", function () {
+          $(this).addClass("highlight");
+        });
+
+        $(".tweetBox").on("mouseleave", " .userHandle", function () {
+          $(this).removeClass("highlight");
+        });
+
+        $(".tweetBox").on("click", ".userHandle", function() {
+          $(".tweetBox").empty();
+          var tweetHandle = $(this).context.innerText; 
+          var username = tweetHandle.substring(1, tweetHandle.indexOf(":"));
+          var stream = streams.users[username];
+          var i = stream.length - 1;
+          var ender = stream.length - 11;
+          if (ender < 0) {
+            ender = 0;
+          }
+          for (i; i >= ender; i--) {
+            var $userTweet = $('<div class = "tweetMessage"></div>');
+            var $userHandle = $('<div class = "userHandle"></div>');
+            var $userAge = $('<div class = "tweetAge"> </div>');
+            //split up into handle and message
+            $userHandle.text('@' + username);
+            $userTweet.text(': ' + (stream[i]).message + ' · ');
+            $userAge.text(timeElapsed(stream[i].created_at));
+            $userAge.appendTo($userTweet);
+            $userTweet.appendTo($userHandle);
+            $userHandle.appendTo($body);
+          }
+        })
+      }
+
+      displayTweets(streams.home.length - 1, 0);
+
+      $("#tweetRefresh").on('click', refreshTweets);
+
+      function refreshTweets() {
+        displayTweets(streams.home.length - 1, streams.home.length - 10);
+      };
+
+      function timeElapsed(createTime) {
+        var secondsElapsed = Math.floor((Date.now() - createTime) / 1000);
+        var minutesElapsed = Math.floor(secondsElapsed/60);
+        var timeStamp;
+
+        if (secondsElapsed < 60) {
+          timeStamp = secondsElapsed + 's';
+        } else {
+          timeStamp = minutesElapsed + 'm';          }
+          return timeStamp;
         }
-
       });
 
     </script>
+    
   </body>
 </html>

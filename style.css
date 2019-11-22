@@ -1,0 +1,31 @@
+body {
+	text-align: center;
+	background-color: #1E90FF;
+}
+
+.title {
+	font-family: sans-serif;
+}
+#timeStamp {
+	color: #404040;
+	size: 8px;
+}
+.tweetMessage {
+	display: inline-block;
+	margin-right: 10px;
+}
+
+.tweetAge {
+	display: inline-block;
+	font-size: smaller;
+	color: #585858;
+}
+
+.userHandle {
+	font-family: sans-serif;
+}
+
+.highlight {
+	text-decoration: underline;
+	cursor: pointer;
+}
